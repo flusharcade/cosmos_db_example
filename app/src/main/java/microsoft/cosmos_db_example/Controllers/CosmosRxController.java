@@ -32,6 +32,7 @@ import rx.schedulers.Schedulers;
 
 public class CosmosRxController {
     private static CosmosRxController instance = null;
+    public static Boolean idBased = true;
 
     public static CosmosRxController getInstance(CosmosDelegate delegate) {
         if(instance == null) {
@@ -56,7 +57,11 @@ public class CosmosRxController {
 
     public Observable<DatabaseContract> getDatabaseById(String databaseId) {
         String date = createDate();
-        String authString = generateAuthToken(HttpMethod.POST.toString(), "dbs", "", date,
+
+        String resourceLink = String.format("%s/%s", "dbs", databaseId);
+        String resourceId = idBased ? resourceLink : databaseId;
+
+        String authString = generateAuthToken(HttpMethod.GET.toString(), "dbs", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
         CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
