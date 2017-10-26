@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">cosmos-db-example</string>
+    <string name="button_run_scheduler">cosmos-db-example</string>
+</resources>
