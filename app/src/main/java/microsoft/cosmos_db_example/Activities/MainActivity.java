@@ -79,7 +79,7 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
                     controller.createDocument("testDb", "example", "wiggum", params);*/
 
-                    _rxController.createCollection("example", "test")
+                    _rxController.getDocuments("example", "test")
                             .subscribe(x -> {
                                 Log.e("onError", "WIGGUM");
                             });

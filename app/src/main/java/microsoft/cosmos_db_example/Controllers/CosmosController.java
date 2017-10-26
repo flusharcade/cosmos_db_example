@@ -46,8 +46,8 @@ public class CosmosController {
         });
     }
 
-    public void createDatabase(String databaseId) {
-        _cosmosService.createDatabase(new IAsyncResponse() {
+    public void getDatabaseById(String databaseId) {
+        _cosmosService.getDatabaseById(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
                 String test = "";
@@ -55,8 +55,8 @@ public class CosmosController {
         }, databaseId);
     }
 
-    public void getDatabase(String databaseId) {
-        _cosmosService.getDatabase(new IAsyncResponse() {
+    public void createDatabase(String databaseId) {
+        _cosmosService.createDatabase(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
                 String test = "";
@@ -83,8 +83,8 @@ public class CosmosController {
         }, databaseId, collectionId);
     }
 
-    public void getCollection(String databaseId, String collectionId) {
-        _cosmosService.getCollection(new IAsyncResponse() {
+    public void getCollectionById(String databaseId, String collectionId) {
+        _cosmosService.getCollectionById(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
                 String test = "";
@@ -94,7 +94,7 @@ public class CosmosController {
 
     // docs
     public void getDocuments(String databaseId, String collectionId) {
-        _cosmosService.getDocumentsInCollection(new IAsyncResponse() {
+        _cosmosService.getDocuments(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
                 String test = "";
@@ -102,17 +102,8 @@ public class CosmosController {
         }, databaseId, collectionId);
     }
 
-    public void createDocument(String databaseId, String collectionId, String documentId, HashMap<String, String> documentParams) {
-        _cosmosService.createDocumentInCollection(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId, collectionId, documentId, documentParams);
-    }
-
-    public void getDocument(String databaseId, String collectionId, String documentId) {
-        _cosmosService.getDocumentInCollection(new IAsyncResponse() {
+    public void getDocumentById(String databaseId, String collectionId, String documentId) {
+        _cosmosService.getDocumentById(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
                 String test = "";
@@ -120,9 +111,18 @@ public class CosmosController {
         }, databaseId, collectionId, documentId);
     }
 
+    public void createDocument(String databaseId, String collectionId, String documentId, HashMap<String, String> documentParams) {
+        _cosmosService.createDocument(new IAsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+                String test = "";
+            }
+        }, databaseId, collectionId, documentId, documentParams);
+    }
+
     // attachments
     public void getAttachments(String databaseId, String collectionId, String attachmentId) {
-        _cosmosService.getAttachmentsInDocument(new IAsyncResponse() {
+        _cosmosService.getAttachments(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
                 String test = "";
@@ -130,22 +130,22 @@ public class CosmosController {
         }, databaseId, collectionId, attachmentId);
     }
 
-    public void createAttachment(String databaseId, String collectionId, String documentId, String attachmentId,
-                                 String attachmentContentType, String media) {
-        _cosmosService.createAttachmentInDocument(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId, collectionId, documentId, attachmentId, attachmentContentType, media);
-    }
-
-    public void getAttachment(String databaseId, String collectionId, String documentId, String attachmentId) {
-        _cosmosService.getAttachmentInDocument(new IAsyncResponse() {
+    public void getAttachmentById(String databaseId, String collectionId, String documentId, String attachmentId) {
+        _cosmosService.getAttachmentById(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
                 String test = "";
             }
         }, databaseId, collectionId, documentId, attachmentId);
+    }
+
+    public void createAttachment(String databaseId, String collectionId, String documentId, String attachmentId,
+                                 String attachmentContentType, String media) {
+        _cosmosService.createAttachment(new IAsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+                String test = "";
+            }
+        }, databaseId, collectionId, documentId, attachmentId, attachmentContentType, media);
     }
 }

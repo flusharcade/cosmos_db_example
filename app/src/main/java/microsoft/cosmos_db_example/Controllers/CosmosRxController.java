@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.crypto.Mac;
@@ -141,36 +142,70 @@ public class CosmosRxController {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    // colls
-    /*public void getCollections(String databaseId) {
-        _cosmosService.getCollections(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId);
+    // docs
+    public Observable<Object> getDocuments(String databaseId, String collectionId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs", databaseId, collectionId);
+        String resourceId = idBased ? String.format("dbs/%s/colls/%s", databaseId, collectionId)
+                : collectionId.toLowerCase(Locale.ROOT);
+
+        String authString = generateAuthToken(HttpMethod.GET.toString(), "docs", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.getDocuments(databaseId, collectionId, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void createCollection(String databaseId, String collectionId) {
-        _cosmosService.createCollection(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId, collectionId);
+    public Observable<Object> getDocumentById(String databaseId, String collectionId, String documentId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs/%s", databaseId, collectionId, documentId);
+        String resourceId = idBased ? resourceLink : documentId.toLowerCase(Locale.ROOT);
+
+        String authString = generateAuthToken(HttpMethod.GET.toString(), "docs", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.getDocumentById(databaseId, collectionId, documentId, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void getCollection(String databaseId, String collectionId) {
-        _cosmosService.getCollection(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId, collectionId);
+    public Observable<Object> createDocument(String databaseId, String collectionId, String documentId,
+                                             HashMap<String, Object> documentParams) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs", databaseId, collectionId, documentId);
+        String resourceId = idBased ? String.format("dbs/%s/colls/%s", databaseId, collectionId) : documentId.toLowerCase(Locale.ROOT);
+
+        String authString = generateAuthToken(HttpMethod.POST.toString(), "docs", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("id", documentId);
+
+        // for all document parameters
+        for (Map.Entry<String, Object> entry : documentParams.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+
+            params.put(key, value);
+        }
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.createDocument(databaseId, collectionId, params, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     // docs
-    public void getDocuments(String databaseId, String collectionId) {
+    /*public void getDocuments(String databaseId, String collectionId) {
         _cosmosService.getDocumentsInCollection(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
