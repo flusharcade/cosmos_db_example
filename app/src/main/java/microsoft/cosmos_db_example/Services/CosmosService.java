@@ -8,6 +8,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -33,7 +34,6 @@ public class CosmosService extends BaseWebService {
 
     public CosmosService() {
         super();
-
     }
 
     // gets all databases
@@ -43,27 +43,27 @@ public class CosmosService extends BaseWebService {
         authString = generateAuthToken(HttpMethod.GET.toString(), "dbs", "", date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
-        Send(delegate, DBConstants.EndpointUrl,"dbs", HttpMethod.GET, null, authString, date);
+        Send(delegate, DBConstants.EndpointUrl,"dbs", HttpMethod.GET, null, authString, date, null);
     }
 
     // creates a database
     public void createDatabase(IAsyncResponse delegate, String databaseId) {
         String date = createDate();
 
-        authString = generateAuthToken(HttpMethod.GET.toString(), "dbs", "", date,
+        authString = generateAuthToken(HttpMethod.POST.toString(), "dbs", "", date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("id", databaseId);
 
-        Send(delegate, DBConstants.EndpointUrl,"dbs", HttpMethod.GET, params, authString, date);
+        Send(delegate, DBConstants.EndpointUrl,"dbs", HttpMethod.POST, params, authString, date, null);
     }
 
     // get a database by id
     public void getDatabase(IAsyncResponse delegate, String databaseId) {
         String date = createDate();
 
-        String resourceLink = String.format("%s/%s", "dbs/", databaseId);
+        String resourceLink = String.format("%s/%s", "dbs", databaseId);
         String resourceId = idBased ? resourceLink : databaseId;
 
         authString = generateAuthToken(HttpMethod.GET.toString(), "dbs", resourceId, date,
@@ -72,7 +72,7 @@ public class CosmosService extends BaseWebService {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("id", databaseId);
 
-        Send(delegate, DBConstants.EndpointUrl,resourceLink, HttpMethod.GET, params, authString, date);
+        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.GET, params, authString, date, null);
     }
 
     // gets all collections
@@ -80,12 +80,15 @@ public class CosmosService extends BaseWebService {
         String date = createDate();
 
         String resourceLink = String.format("dbs/%s/colls", databaseId);
-        String resourceId = (idBased) ? resourceLink : databaseId.toLowerCase(Locale.ROOT);
+        String resourceId = (idBased) ? String.format("dbs/%s", databaseId) : databaseId.toLowerCase(Locale.ROOT);
 
         authString = generateAuthToken(HttpMethod.GET.toString(), "colls", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
-        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.GET, null, authString, date);
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", databaseId);
+
+        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.GET, params, authString, date, null);
     }
 
     // get a collection by id
@@ -101,21 +104,139 @@ public class CosmosService extends BaseWebService {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("id", databaseId);
 
-        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.GET, params, authString, date);
+        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.GET, params, authString, date, null);
     }
 
     // creates a collection in specific database
     public void createCollection(IAsyncResponse delegate, String databaseId, String collectionId) {
         String date = createDate();
 
-        authString = generateAuthToken(HttpMethod.POST.toString(), "colls", "dbs/example", date,
+        String resourceLink = String.format("dbs/%s/colls", databaseId);
+        String resourceId = idBased ? String.format("dbs/%s", databaseId) : collectionId.toLowerCase(Locale.ROOT);
+
+        authString = generateAuthToken(HttpMethod.POST.toString(), "colls", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
-        Send(delegate, DBConstants.EndpointUrl,"dbs/example", HttpMethod.POST, null, authString, date);
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", collectionId);
+
+        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.POST, params, authString, date,null);
     }
 
     // retrieves all documents from a particular collection
     public void getDocumentsInCollection(IAsyncResponse delegate, String databaseId, String collectionId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs", databaseId, collectionId);
+        String resourceId = idBased ? String.format("dbs/%s/colls/%s", databaseId, collectionId)
+                : collectionId.toLowerCase(Locale.ROOT);
+
+        authString = generateAuthToken(HttpMethod.GET.toString(), "docs", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", databaseId);
+
+        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.GET, params, authString, date, null);
+    }
+
+    // get a document by id
+    public void getDocumentInCollection(IAsyncResponse delegate, String databaseId, String collectionId, String documentId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs/%s", databaseId, collectionId, documentId);
+        String resourceId = idBased ? resourceLink : documentId.toLowerCase(Locale.ROOT);
+
+        authString = generateAuthToken(HttpMethod.GET.toString(), "docs", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", documentId);
+
+        Send(delegate, DBConstants.EndpointUrl,resourceLink, HttpMethod.GET, params, authString, date, null);
+    }
+
+    // create a document in a collection in a database
+    public void createDocumentInCollection(IAsyncResponse delegate, String databaseId, String collectionId, String documentId,
+                                           HashMap<String, String> documentParams) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs", databaseId, collectionId, documentId);
+        String resourceId = idBased ? String.format("dbs/%s/colls/%s", databaseId, collectionId) : documentId.toLowerCase(Locale.ROOT);
+
+        authString = generateAuthToken(HttpMethod.POST.toString(), "docs", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", documentId);
+
+        // for all document parameters
+        for (Map.Entry<String, String> entry : documentParams.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            params.put(key, value);
+        }
+
+        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.POST, params, authString, date, null);
+    }
+
+    // retrieves all attachments from a particular document
+    public void getAttachmentsInDocument(IAsyncResponse delegate, String databaseId, String collectionId, String documentId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs/%s/attachments", databaseId, collectionId, documentId);
+        String resourceId = idBased ? String.format("dbs/%s/colls/%s/docs/%s", databaseId, collectionId, documentId)
+                : documentId.toLowerCase(Locale.ROOT);
+
+        authString = generateAuthToken(HttpMethod.GET.toString(), "attachments", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", documentId);
+
+        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.GET, params, authString, date, null);
+    }
+
+    // get an attachment by id from document
+    public void getAttachmentInDocument(IAsyncResponse delegate, String databaseId, String collectionId,
+                                        String documentId, String attachmentId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs/%s/attachments/%s", databaseId, collectionId, documentId, attachmentId);
+        String resourceId = idBased ? resourceLink : attachmentId.toLowerCase(Locale.ROOT);
+
+        authString = generateAuthToken(HttpMethod.GET.toString(), "attachments", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", attachmentId);
+
+        Send(delegate, DBConstants.EndpointUrl,resourceLink, HttpMethod.GET, params, authString, date, null);
+    }
+
+    // create an attachment to a document in a collection in a database
+    public void createAttachmentInDocument(IAsyncResponse delegate, String databaseId, String collectionId, String documentId,
+                                           String attachmentId, String attachmentContentType, String media) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs/%s/attachments", databaseId, collectionId, documentId);
+        String resourceId = idBased ? String.format("dbs/%s/colls/%s/docs/%s", databaseId, collectionId, documentId)
+                : attachmentId.toLowerCase(Locale.ROOT);
+
+        authString = generateAuthToken(HttpMethod.POST.toString(), "attachments", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", attachmentId);
+        params.put("contentType", attachmentContentType);
+        params.put("media", media);
+
+        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.POST, params, authString, date, null);
+    }
+
+    // execute a query
+    public void executeQuery(IAsyncResponse delegate, String databaseId, String collectionId, String query) {
         String date = createDate();
 
         String resourceLink = String.format("dbs/%s/colls/%s/docs", databaseId, collectionId);
@@ -127,23 +248,7 @@ public class CosmosService extends BaseWebService {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("id", databaseId);
 
-        Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.GET, params, authString, date);
-    }
-
-    // get a document by id
-    public void getDocument(IAsyncResponse delegate, String databaseId, String collectionId, String documentId) {
-        String date = createDate();
-
-        String resourceLink = String.format("dbs/%s/colls/%s/docs/%s", databaseId, collectionId, documentId);
-        String resourceId = idBased ? resourceLink : documentId.toLowerCase(Locale.ROOT);
-
-        authString = generateAuthToken(HttpMethod.GET.toString(), "docs", resourceId, date,
-                DBConstants.PrimaryKey, "master", "1.0");
-
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("id", databaseId);
-
-        Send(delegate, DBConstants.EndpointUrl,resourceLink, HttpMethod.GET, params, authString, date);
+        Send(delegate, DBConstants.EndpointUrl,resourceLink, HttpMethod.GET, params, authString, date, query);
     }
 
     private String generateAuthToken(String verb, String resourceType, String resourceId, String date, String key, String keyType, String tokenVersion) {

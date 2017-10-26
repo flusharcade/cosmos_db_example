@@ -30,7 +30,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
 import microsoft.cosmos_db_example.Controllers.App;
 import microsoft.cosmos_db_example.Controllers.CosmosController;
@@ -75,29 +74,24 @@ public class MainActivity extends Activity implements CosmosDelegate {
             public void onClick(View v) {
                 //controller.getDatabases();
 
-                controller.createDatabase("testDb");
+                try
+                {
+                    /*JSONObject document = new JSONObject();
+                    document.put("filename", "new_document");
+                    document.put("user", "michael");
 
-                //CosmosDBService service = ServiceFactory.createRetrofitService(CosmosDBService.class, DBConstants.EndpointUrl);
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    params.put("document", document.toString());
 
-                /*service.getUser(login)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<TodoItem>() {
-                            @Override
-                            public final void onCompleted() {
-                                // do nothing
-                            }
+                    controller.createDocument("testDb", "example", "wiggum", params);*/
 
-                            @Override
-                            public final void onError(Throwable e) {
-                                Log.e("GithubDemo", e.getMessage());
-                            }
+                    controller.createAttachment("testDb", "example", "wiggum", "imageId1", "image/jpg", "www.bing.com");
 
-                            @Override
-                            public final void onNext(Github response) {
-                                mCardAdapter.addData(response);
-                            }
-                        });*/
+                    //controller.getAttachment("testDb", "example", "wiggum", "imageId1");
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
     }

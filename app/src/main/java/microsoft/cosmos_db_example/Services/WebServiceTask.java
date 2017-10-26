@@ -34,12 +34,16 @@ public class WebServiceTask extends AsyncTask<String, Void, String>
 
     private String _authString;
 
-    WebServiceTask(IAsyncResponse delegate, HttpMethod method, HashMap<String, String> parameters, String authString, String date) {
+    private String _query;
+
+    WebServiceTask(IAsyncResponse delegate, HttpMethod method, HashMap<String, String> parameters,
+                   String authString, String date, String query) {
         _delegate = delegate;
         _method = method;
         _parameters = parameters;
         _date = date;
         _authString = authString;
+        _query = query;
 
         _body = RequestBody.create(JSON, "");
     }
@@ -71,6 +75,7 @@ public class WebServiceTask extends AsyncTask<String, Void, String>
                             .addHeader("x-ms-date", _date)
                             .addHeader("x-ms-version", "2015-08-06")
                             .addHeader("authorization", _authString)
+                            .addHeader("Accept", "application/json")
                             .url(urls[0])
                             .get()
                             .build();
@@ -80,9 +85,22 @@ public class WebServiceTask extends AsyncTask<String, Void, String>
                             .addHeader("x-ms-date", _date)
                             .addHeader("x-ms-version", "2015-08-06")
                             .addHeader("authorization", _authString)
+                            .addHeader("Accept", "application/json")
                             .url(urls[0])
                             .post(_body)
                             .build();
+
+                    if (_query != null && !_query.isEmpty()) {
+                        request = new Request.Builder()
+                                .addHeader("x-ms-date", _date)
+                                .addHeader("x-ms-version", "2015-08-06")
+                                .addHeader("x-ms-documentdb-isquery", _query)
+                                .addHeader("authorization", _authString)
+                                .addHeader("Accept", "application/json")
+                                .url(urls[0])
+                                .post(_body)
+                                .build();
+                    }
                     break;
                 default:
                     request = new Request.Builder()
@@ -93,7 +111,6 @@ public class WebServiceTask extends AsyncTask<String, Void, String>
 
 
             try {
-
                 response = client.newCall(request).execute();
 
                 if (response.isSuccessful()) {
