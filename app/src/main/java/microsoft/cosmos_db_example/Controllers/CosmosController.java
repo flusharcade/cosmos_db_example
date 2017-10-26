@@ -2,6 +2,7 @@ package microsoft.cosmos_db_example.Controllers;
 
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.Services.CosmosService;
+import microsoft.cosmos_db_example.Services.IAsyncResponse;
 
 /**
  * Created by mww121 on 26/10/17.
@@ -29,13 +30,26 @@ public class CosmosController {
         _cosmosService = CosmosService.getInstance();
     }
 
-    protected void updateDelegate(CosmosDelegate delegate)
-    {
+    protected void updateDelegate(CosmosDelegate delegate) {
         _delegate = delegate;
     }
 
+    public void getDatabases() {
+        _cosmosService.getDatabases(new IAsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+                String test = "";
+            }
+        });
+    }
+
     public void createDatabase() {
-        _cosmosService.createDocumentCollection();
+        _cosmosService.createDocumentCollection(new IAsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+                String test = "";
+            }
+        });
 
         /*_cosmosService.checkProgramCode(new IAsyncResponse() {
             @Override

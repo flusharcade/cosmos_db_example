@@ -31,6 +31,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
+import microsoft.cosmos_db_example.Controllers.App;
 import microsoft.cosmos_db_example.Controllers.CosmosController;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.R;
@@ -71,7 +72,7 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
         bFetch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                controller.createDatabase();
+                controller.getDatabases();
 
                 //CosmosDBService service = ServiceFactory.createRetrofitService(CosmosDBService.class, DBConstants.EndpointUrl);
 
@@ -96,6 +97,18 @@ public class MainActivity extends Activity implements CosmosDelegate {
                         });*/
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        App.activityResumed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        App.activityPaused();
     }
 
     @Override protected void onDestroy() {

@@ -6,11 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Locale;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -42,53 +38,44 @@ public class CosmosService extends BaseWebService {
 
     }
 
-    public void createDocumentCollection() {
+    public void getDatabases(IAsyncResponse delegate) {
         String date = createDate();
 
-        authString = generateAuthToken(HttpMethod.POST.toString(), "colls", "dbs/example", date,
+        authString = generateAuthToken(HttpMethod.GET.toString(), "dbs", "", date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
+        Send(delegate, DBConstants.EndpointUrl,"dbs", HttpMethod.GET, null, authString, date);
     }
 
-    private String createDate() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        Calendar cal = Calendar.getInstance();
+    public void createDocumentCollection(IAsyncResponse delegate) {
+        String date = "Thu, 26 Oct 2017 08:36:40 GMT";
 
-        return dateFormat.format(cal).toString();
+        authString = generateAuthToken(HttpMethod.POST.toString(), "dbs", "dbs/example", date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        Send(delegate, DBConstants.EndpointUrl,"dbs/example", HttpMethod.POST, null, authString, date);
     }
 
     private String generateAuthToken(String verb, String resourceType, String resourceId, String date, String key, String keyType, String tokenVersion) {
         try
         {
-            int flags = Base64.NO_WRAP | Base64.URL_SAFE;
+            byte[] decodedKey = org.apache.commons.codec.binary.Base64.decodeBase64(key.getBytes());
 
-            byte[] secretKey = Base64.decode(key, flags);
-            SecretKeySpec signingKey = new SecretKeySpec(secretKey, "HmacSHA256");
-            Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(signingKey);
+            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secret_key = new SecretKeySpec(decodedKey, "HmacSHA256");
+            sha256_HMAC.init(secret_key);
 
-            // check values of verb, resourceType and resourceId
-            if(verb != null && !verb.isEmpty()) {
-                verb = "";
-            }
-            if(resourceType != null && !resourceType.isEmpty()) {
-                resourceType = "";
-            }
-            if(resourceId != null && !resourceId.isEmpty()) {
-                resourceId = "";
-            }
-
-            String payLoad = String.format("{0}\n{1}\n{2}\n{3}\n{4}\n",
-                verb.toLowerCase(),
-                resourceType.toLowerCase(),
+            String payload = String.format("%s\n%s\n%s\n%s\n%s\n",
+                verb.toLowerCase(Locale.ROOT),
+                resourceType.toLowerCase(Locale.ROOT),
                 resourceId,
-                date.toLowerCase(), "");
+                date.toLowerCase(Locale.ROOT), "");
 
-            byte[] hashPayLoad = mac.doFinal(Base64.decode(payLoad, flags));
+            byte[] hashPayLoad = sha256_HMAC.doFinal(payload.getBytes("UTF-8"));
 
-            String signature = Base64.encodeToString(hashPayLoad, flags);
+            String signature = Base64.encodeToString(hashPayLoad, Base64.DEFAULT).replace("\n", "");
 
-            return URLEncoder.encode(String.format("type={0}&ver={1}&sig={2}", keyType, tokenVersion, signature), "");
+            return URLEncoder.encode(String.format("type=%s&ver=%s&sig=%s", keyType, tokenVersion, signature), "UTF-8");
 
         } catch (UnsupportedEncodingException e){
             e.printStackTrace();

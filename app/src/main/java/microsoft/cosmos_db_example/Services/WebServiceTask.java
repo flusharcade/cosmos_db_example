@@ -28,15 +28,18 @@ public class WebServiceTask extends AsyncTask<String, Void, String>
 
     private HashMap<String, String> _parameters;
 
-    private String _token = "";
-
     private RequestBody _body;
 
-    WebServiceTask(IAsyncResponse delegate, HttpMethod method, HashMap<String, String> parameters, String token) {
+    private String _date;
+
+    private String _authString;
+
+    WebServiceTask(IAsyncResponse delegate, HttpMethod method, HashMap<String, String> parameters, String authString, String date) {
         _delegate = delegate;
         _method = method;
         _parameters = parameters;
-        _token = token;
+        _date = date;
+        _authString = authString;
 
         _body = RequestBody.create(JSON, "");
     }
@@ -65,16 +68,18 @@ public class WebServiceTask extends AsyncTask<String, Void, String>
             switch (_method) {
                 case GET:
                     request = new Request.Builder()
-                            .addHeader("version", "1.6.4")
-                            .addHeader("token", _token)
+                            .addHeader("x-ms-date", _date)
+                            .addHeader("x-ms-version", "2015-08-06")
+                            .addHeader("authorization", _authString)
                             .url(urls[0])
                             .get()
                             .build();
                     break;
                 case POST:
                     request = new Request.Builder()
-                            .addHeader("version", "1.6.4")
-                            .addHeader("token", _token)
+                            .addHeader("x-ms-date", _date)
+                            .addHeader("x-ms-version", "2015-08-06")
+                            .addHeader("authorization", _authString)
                             .url(urls[0])
                             .post(_body)
                             .build();
