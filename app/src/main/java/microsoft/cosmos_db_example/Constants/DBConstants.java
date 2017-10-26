@@ -5,8 +5,8 @@ package microsoft.cosmos_db_example.Constants;
  */
 
 public class DBConstants {
-    public static String EndpointUrl    = "<Enter URL here>";
-    public static String PrimaryKey    = "<Enter Primary Key here>";
-    public static String DatabaseName    = "<Enter DB name here>";
-    public static String CollectionName    = "<Enter Collection here>";
+    public final static String EndpointUrl = "https://androidexample.documents.azure.com:443/";
+    public final static String PrimaryKey = "f30Km46WXnA30gw0aMgK62hqDwtpCFL68alMzpqNRMqC2rqOYRzHLplRihczaz8lXfyOMVVeGM9buILCqOWiXA==";
+    public final static String DatabaseId = "example";
+    public final static String CollectionId = "example";
 }

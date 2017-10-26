@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
@@ -32,6 +33,8 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
 import microsoft.cosmos_db_example.Constants.DBConstants;
+import microsoft.cosmos_db_example.Controllers.TodoItemController;
+import microsoft.cosmos_db_example.Models.TodoItem;
 import microsoft.cosmos_db_example.R;
 import microsoft.cosmos_db_example.Services.CosmosDBService;
 import microsoft.cosmos_db_example.Services.ServiceFactory;
@@ -40,6 +43,8 @@ public class MainActivity extends Activity {
     private static final String TAG = "RxAndroidSamples";
 
     private final CompositeDisposable disposables = new CompositeDisposable();
+
+    private TodoItemController controller;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +56,7 @@ public class MainActivity extends Activity {
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         final CardAdapter mCardAdapter = new CardAdapter();
         mRecyclerView.setAdapter(mCardAdapter);
 
@@ -68,29 +74,31 @@ public class MainActivity extends Activity {
         bFetch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 CosmosDBService service = ServiceFactory.createRetrofitService(CosmosDBService.class, DBConstants.EndpointUrl);
-                /*for(String login : Data.githubList) {
-                    service.getUser(login)
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<Github>() {
-                                @Override
-                                public final void onCompleted() {
-                                    // do nothing
-                                }
 
-                                @Override
-                                public final void onError(Throwable e) {
-                                    Log.e("GithubDemo", e.getMessage());
-                                }
+                ArrayList<TodoItem> items = controller.getTodoItems();
+                /*service.getUser(login)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<TodoItem>() {
+                            @Override
+                            public final void onCompleted() {
+                                // do nothing
+                            }
 
-                                @Override
-                                public final void onNext(Github response) {
-                                    mCardAdapter.addData(response);
-                                }
-                            });
-                }*/
+                            @Override
+                            public final void onError(Throwable e) {
+                                Log.e("GithubDemo", e.getMessage());
+                            }
+
+                            @Override
+                            public final void onNext(Github response) {
+                                mCardAdapter.addData(response);
+                            }
+                        });*/
             }
         });
+
+        controller = TodoItemController.getInstance();
     }
 
     @Override protected void onDestroy() {
