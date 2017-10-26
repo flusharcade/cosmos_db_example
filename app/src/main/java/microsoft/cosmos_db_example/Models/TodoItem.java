@@ -12,7 +12,7 @@ import java.util.Objects;
  * license information.
  */
 
-@Document(collection = "mycollection")
+//@Document(collection = "mycollection")
 public class TodoItem {
     private String id;
     private String description;

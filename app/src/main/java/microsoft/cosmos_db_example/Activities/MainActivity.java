@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
@@ -34,7 +33,6 @@ import io.reactivex.schedulers.Schedulers;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
 import microsoft.cosmos_db_example.Constants.DBConstants;
 import microsoft.cosmos_db_example.Controllers.TodoItemController;
-import microsoft.cosmos_db_example.Models.TodoItem;
 import microsoft.cosmos_db_example.R;
 import microsoft.cosmos_db_example.Services.CosmosDBService;
 import microsoft.cosmos_db_example.Services.ServiceFactory;
@@ -75,7 +73,6 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 CosmosDBService service = ServiceFactory.createRetrofitService(CosmosDBService.class, DBConstants.EndpointUrl);
 
-                ArrayList<TodoItem> items = controller.getTodoItems();
                 /*service.getUser(login)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
