@@ -43,34 +43,22 @@ public class CosmosController {
         });
     }
 
-    public void createDatabase() {
-        _cosmosService.createDocumentCollection(new IAsyncResponse() {
+    public void createDatabase(String databaseId) {
+        _cosmosService.createDatabase(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
                 String test = "";
             }
-        });
+        }, databaseId);
+    }
 
-        /*_cosmosService.checkProgramCode(new IAsyncResponse() {
+    public void getDatabase(String databaseId) {
+        _cosmosService.createDatabase(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
-                ProgramCodeContract contract = (ProgramCodeContract) JSONParser.getInstance().deserialize(output, ProgramCodeContract.class);
-
-                if (contract != null && contract.Success) {
-                    // save group id
-                    // Note that this will set the Questionnaire Screens list as well
-                    if (contract.Group != null) {
-                        ProgramCode code = new ProgramCode(contract.Group.Id, programCode, contract.Group.Name, contract.Group.Screens);
-                        User.getInstance().setProgram(code);
-                    }
-
-                    _delegate.didValidateProgramCode();
-                }
-                else {
-                    Helpers.as(ErrorDelegate.class, _delegate).didError(contract);
-                }
+                String test = "";
             }
-        }, programCode);*/
+        }, databaseId);
     }
 
     /*public void login(String email, String password, String groudId)

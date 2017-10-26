@@ -30,6 +30,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
 import microsoft.cosmos_db_example.Controllers.App;
 import microsoft.cosmos_db_example.Controllers.CosmosController;
@@ -72,7 +73,9 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
         bFetch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                controller.getDatabases();
+                //controller.getDatabases();
+
+                controller.createDatabase("testDb");
 
                 //CosmosDBService service = ServiceFactory.createRetrofitService(CosmosDBService.class, DBConstants.EndpointUrl);
 
