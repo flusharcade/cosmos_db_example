@@ -31,14 +31,12 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
-import microsoft.cosmos_db_example.Constants.DBConstants;
 import microsoft.cosmos_db_example.Controllers.TodoItemController;
+import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.R;
-import microsoft.cosmos_db_example.Services.CosmosDBService;
-import microsoft.cosmos_db_example.Services.ServiceFactory;
 
-public class MainActivity extends Activity {
-    private static final String TAG = "RxAndroidSamples";
+public class MainActivity extends Activity implements CosmosDelegate {
+    private static final String TAG = "MainActivity";
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -71,7 +69,7 @@ public class MainActivity extends Activity {
 
         bFetch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                CosmosDBService service = ServiceFactory.createRetrofitService(CosmosDBService.class, DBConstants.EndpointUrl);
+                //CosmosDBService service = ServiceFactory.createRetrofitService(CosmosDBService.class, DBConstants.EndpointUrl);
 
                 /*service.getUser(login)
                         .subscribeOn(Schedulers.newThread())
@@ -132,5 +130,9 @@ public class MainActivity extends Activity {
                 return Observable.just("one", "two", "three", "four", "five");
             }
         });
+    }
+
+    public void didError() {
+
     }
 }
