@@ -15,39 +15,33 @@ package microsoft.cosmos_db_example.Activities;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.concurrent.Callable;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
 import microsoft.cosmos_db_example.Controllers.App;
 import microsoft.cosmos_db_example.Controllers.CosmosController;
+import microsoft.cosmos_db_example.Controllers.CosmosRxController;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.R;
 
 public class MainActivity extends Activity implements CosmosDelegate {
     private static final String TAG = "MainActivity";
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    //private final CompositeDisposable disposables = new CompositeDisposable();
 
     private CosmosController controller;
+
+    private CosmosRxController _rxController;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        controller = CosmosController.getInstance(this);
+        _rxController = CosmosRxController.getInstance(this);
 
         /**
          * Set up Android CardView/RecycleView
@@ -85,7 +79,12 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
                     controller.createDocument("testDb", "example", "wiggum", params);*/
 
-                    controller.createAttachment("testDb", "example", "wiggum", "imageId1", "image/jpg", "www.bing.com");
+                    _rxController.getDatabasesTestOne()
+                            .subscribe(x -> {
+                                Log.e("onError", "WIGGUM");
+                            });
+
+                    //controller.createAttachment("testDb", "example", "wiggum", "imageId1", "image/jpg", "www.bing.com");
 
                     //controller.getAttachment("testDb", "example", "wiggum", "imageId1");
                 }
@@ -110,11 +109,11 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
     @Override protected void onDestroy() {
         super.onDestroy();
-        disposables.clear();
+        //disposables.clear();
     }
 
     void onRunSchedulerExampleButtonClicked() {
-        disposables.add(sampleObservable()
+        /*disposables.add(sampleObservable()
                 // Run on a background thread
                 .subscribeOn(Schedulers.io())
                 // Be notified on the main thread
@@ -131,10 +130,10 @@ public class MainActivity extends Activity implements CosmosDelegate {
                     @Override public void onNext(String string) {
                         Log.d(TAG, "onNext(" + string + ")");
                     }
-                }));
+                }));*/
     }
 
-    static Observable<String> sampleObservable() {
+    /*static Observable<String> sampleObservable() {
         return Observable.defer(new Callable<ObservableSource<? extends String>>() {
             @Override public ObservableSource<? extends String> call() throws Exception {
                 // Do some long running operation
@@ -142,7 +141,7 @@ public class MainActivity extends Activity implements CosmosDelegate {
                 return Observable.just("one", "two", "three", "four", "five");
             }
         });
-    }
+    }*/
 
     public void didError() {
 
