@@ -2,6 +2,8 @@ package microsoft.cosmos_db_example.Services;
 
 import android.util.Base64;
 
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
@@ -215,19 +217,38 @@ public class CosmosService extends BaseWebService {
     }
 
     // execute a query
-    public void executeQuery(IAsyncResponse delegate, String databaseId, String collectionId, String query) {
+    public void executeQuery(IAsyncResponse delegate, String databaseId, String collectionId, String query,
+                             HashMap<String, String> queryParams) {
         String date = createDate();
 
         String resourceLink = String.format("dbs/%s/colls/%s/docs", databaseId, collectionId);
-        String resourceId = idBased ? resourceLink : collectionId.toLowerCase(Locale.ROOT);
+        String resourceId = idBased ? String.format("dbs/%s/colls/%s", databaseId, collectionId)
+                : collectionId.toLowerCase(Locale.ROOT);
 
-        authString = generateAuthToken(HttpMethod.GET.toString(), "docs", resourceId, date,
+        String authString = generateAuthToken(HttpMethod.POST.toString(), "docs", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
         HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("id", databaseId);
+        params.put("query", query);
 
-        Send(delegate, DBConstants.EndpointUrl,resourceLink, HttpMethod.GET, params, authString, date, query);
+        JSONObject queryParameters = new JSONObject();
+
+        try {
+            // for all document parameters
+            for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+
+                queryParameters.put(key, value);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        params.put("parameters", queryParameters.toString());
+
+        Send(delegate, DBConstants.EndpointUrl,resourceLink, HttpMethod.POST, params, authString, date, query);
     }
 
     private String generateAuthToken(String verb, String resourceType, String resourceId, String date, String key, String keyType, String tokenVersion) {

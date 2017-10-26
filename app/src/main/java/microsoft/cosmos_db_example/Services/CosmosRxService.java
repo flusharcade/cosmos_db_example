@@ -73,4 +73,10 @@ public interface CosmosRxService {
                                         @Path("docid") String documentId, @Body HashMap<String, Object> body,
                                         @Header("x-ms-date") String date, @Header("x-ms-version") String version,
                                         @Header("authorization") String authString);
+
+    @POST("/dbs/{dbid}/colls/{collid}/docs")
+    Observable<Object> executeQuery(@Path("dbid") String databaseId, @Path("collid") String collectionId,
+                                        @Body HashMap<String, Object> body, @Header("x-ms-date") String date,
+                                        @Header("x-ms-version") String version, @Header("authorization") String authString,
+                                        @Header("x-ms-documentdb-isquery") String isQuery, @Header("Content-Type") String contentType);
 }

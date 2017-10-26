@@ -148,4 +148,13 @@ public class CosmosController {
             }
         }, databaseId, collectionId, documentId, attachmentId, attachmentContentType, media);
     }
+
+    public void executeQuery(String databaseId, String collectionId, String query, HashMap<String, String> queryParams) {
+        _cosmosService.executeQuery(new IAsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+                String test = "";
+            }
+        }, databaseId, collectionId, query, queryParams);
+    }
 }

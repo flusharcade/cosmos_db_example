@@ -17,11 +17,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
-import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -46,6 +43,7 @@ public class MainActivity extends Activity implements CosmosDelegate {
         setContentView(R.layout.main_activity);
 
         _rxController = CosmosRxController.getInstance(this);
+        controller = CosmosController.getInstance(this);
 
         /**
          * Set up Android CardView/RecycleView
@@ -74,21 +72,27 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
                 try
                 {
-                    JSONObject document = new JSONObject();
+                    /*JSONObject document = new JSONObject();
                     document.put("filename", "new_document");
                     document.put("user", "michael");
 
                     HashMap<String, Object> params = new HashMap<String, Object>();
-                    params.put("document", document.toString());
+                    params.put("document", document.toString());*/
+
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    params.put("name", "@author");
+                    params.put("author", "Leo Tolstoy");
 
                     //controller.createDocument("testDb", "example", "wiggum", params);
 
-                    _rxController.createDocument("testDb", "example", "wiggum1", params)
+                    /*_rxController.executeQuery("testDb", "example", "SELECT * FROM root WHERE (root.Author.id = @author)",
+                            params)
                             .subscribe(x -> {
                                 Log.e("onError", "WIGGUM");
-                            });
+                            });*/
 
-                    //controller.createAttachment("testDb", "example", "wiggum", "imageId1", "image/jpg", "www.bing.com");
+                    controller.executeQuery("testDb", "example", "SELECT * FROM root WHERE (root.Author.id = @author)",
+                            params);
 
                     //controller.getAttachment("testDb", "example", "wiggum", "imageId1");
                 }

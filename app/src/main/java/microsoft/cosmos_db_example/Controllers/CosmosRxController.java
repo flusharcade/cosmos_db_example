@@ -2,6 +2,8 @@ package microsoft.cosmos_db_example.Controllers;
 
 import android.util.Base64;
 
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
@@ -205,61 +207,100 @@ public class CosmosRxController {
     }
 
     // docs
-    /*public void getDocuments(String databaseId, String collectionId) {
-        _cosmosService.getDocumentsInCollection(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId, collectionId);
+    public Observable<Object> getAttachments(String databaseId, String collectionId, String documentId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs/%s/attachments", databaseId, collectionId, documentId);
+        String resourceId = idBased ? String.format("dbs/%s/colls/%s/docs/%s", databaseId, collectionId, documentId)
+                : documentId.toLowerCase(Locale.ROOT);
+
+        String authString = generateAuthToken(HttpMethod.GET.toString(), "attachments", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.getAttachments(databaseId, collectionId, documentId, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void createDocument(String databaseId, String collectionId, String documentId, HashMap<String, String> documentParams) {
-        _cosmosService.createDocumentInCollection(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId, collectionId, documentId, documentParams);
+    public Observable<Object> getAttachmentById(String databaseId, String collectionId, String documentId, String attachmentId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs/%s/attachments/%s", databaseId, collectionId, documentId, attachmentId);
+        String resourceId = idBased ? resourceLink : attachmentId.toLowerCase(Locale.ROOT);
+
+        String authString = generateAuthToken(HttpMethod.GET.toString(), "attachments", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.getAttachmentById(databaseId, collectionId, documentId, attachmentId, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void getDocument(String databaseId, String collectionId, String documentId) {
-        _cosmosService.getDocumentInCollection(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId, collectionId, documentId);
+    public Observable<Object> createAttachment(String databaseId, String collectionId, String documentId,
+                                             String attachmentId, String attachmentContentType, String media) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s/docs/%s/attachments", databaseId, collectionId, documentId);
+        String resourceId = idBased ? String.format("dbs/%s/colls/%s/docs/%s", databaseId, collectionId, documentId)
+                : attachmentId.toLowerCase(Locale.ROOT);
+
+        String authString = generateAuthToken(HttpMethod.POST.toString(), "attachments", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("id", attachmentId);
+        params.put("contentType", attachmentContentType);
+        params.put("media", media);
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.createAttachment(databaseId, collectionId, documentId, params, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    // attachments
-    public void getAttachments(String databaseId, String collectionId, String attachmentId) {
-        _cosmosService.getAttachmentsInDocument(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId, collectionId, attachmentId);
-    }
+    public Observable<Object> executeQuery(String databaseId, String collectionId, String query,
+                                           HashMap<String, String> queryParams) {
+        String date = createDate();
 
-    public void createAttachment(String databaseId, String collectionId, String documentId, String attachmentId,
-                                 String attachmentContentType, String media) {
-        _cosmosService.createAttachmentInDocument(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId, collectionId, documentId, attachmentId, attachmentContentType, media);
-    }
+        String resourceLink = String.format("dbs/%s/colls/%s/docs", databaseId, collectionId);
+        String resourceId = idBased ? String.format("dbs/%s/colls/%s", databaseId, collectionId)
+                : collectionId.toLowerCase(Locale.ROOT);
 
-    public void getAttachment(String databaseId, String collectionId, String documentId, String attachmentId) {
-        _cosmosService.getAttachmentInDocument(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
+        String authString = generateAuthToken(HttpMethod.POST.toString(), "docs", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("query", query);
+
+        JSONObject queryParameters = new JSONObject();
+
+        try {
+            // for all document parameters
+            for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+
+                queryParameters.put(key, value);
             }
-        }, databaseId, collectionId, documentId, attachmentId);
-    }*/
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        params.put("parameters", queryParameters.toString());
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.executeQuery(databaseId, collectionId, params, date, "2015-08-06", authString,
+                "True", "application/query+json")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 
     public String createDate() {
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
