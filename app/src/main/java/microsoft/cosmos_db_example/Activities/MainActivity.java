@@ -16,8 +16,11 @@ package microsoft.cosmos_db_example.Activities;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import java.util.concurrent.Callable;
 
@@ -27,7 +30,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import microsoft.cosmos_db_example.Adapter.CardAdapter;
+import microsoft.cosmos_db_example.Constants.DBConstants;
 import microsoft.cosmos_db_example.R;
+import microsoft.cosmos_db_example.Services.CosmosDBService;
+import microsoft.cosmos_db_example.Services.ServiceFactory;
 
 public class MainActivity extends Activity {
     private static final String TAG = "RxAndroidSamples";
@@ -37,9 +44,51 @@ public class MainActivity extends Activity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        findViewById(R.id.button_run_scheduler).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                onRunSchedulerExampleButtonClicked();
+
+        /**
+         * Set up Android CardView/RecycleView
+         */
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        final CardAdapter mCardAdapter = new CardAdapter();
+        mRecyclerView.setAdapter(mCardAdapter);
+
+        /**
+         * START: button set up
+         */
+        Button bClear = (Button) findViewById(R.id.button_clear);
+        Button bFetch = (Button) findViewById(R.id.button_fetch);
+        bClear.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mCardAdapter.clear();
+            }
+        });
+
+        bFetch.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                CosmosDBService service = ServiceFactory.createRetrofitService(CosmosDBService.class, DBConstants.EndpointUrl);
+                /*for(String login : Data.githubList) {
+                    service.getUser(login)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<Github>() {
+                                @Override
+                                public final void onCompleted() {
+                                    // do nothing
+                                }
+
+                                @Override
+                                public final void onError(Throwable e) {
+                                    Log.e("GithubDemo", e.getMessage());
+                                }
+
+                                @Override
+                                public final void onNext(Github response) {
+                                    mCardAdapter.addData(response);
+                                }
+                            });
+                }*/
             }
         });
     }

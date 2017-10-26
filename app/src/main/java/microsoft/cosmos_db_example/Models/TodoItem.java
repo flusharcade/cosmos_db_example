@@ -1,53 +1,76 @@
 package microsoft.cosmos_db_example.Models;
 
+import java.util.Objects;
+
 /**
  * Created by mww121 on 26/10/17.
  */
 
+//@Document(collection = "mycollection")
 public class TodoItem {
     private String id;
-    private String name;
-    private String notes;
-    private Boolean done;
+    private String description;
+    private String owner;
+    private boolean finished;
 
-    public TodoItem(String id, String name, String notes, Boolean done) {
-        super();
+    public TodoItem() {
+    }
 
+    public TodoItem(String id, String description, String owner) {
+        this.description = description;
         this.id = id;
-        this.name = name;
-        this.notes = notes;
-        this.done = done;
+        this.owner = owner;
+        this.finished = false;
     }
 
-    public Boolean getDone() {
-        return done;
+    public boolean isFinished() {
+        return finished;
     }
 
-    public String getNotes() {
-        return notes;
+    public void setFinish(boolean finished) {
+        this.finished = finished;
     }
 
-    public String getId() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getID() {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setDone(Boolean done) {
-        this.done = done;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public void setId(String id) {
+    public void setID(String id) {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (o == null || !(o instanceof TodoItem)) {
+            return false;
+        }
+        final TodoItem group = (TodoItem) o;
+        return this.getDescription().equals(group.getDescription())
+                && this.getOwner().equals(group.getOwner())
+                && this.getID().equals(group.getID());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description, id, owner);
     }
 }

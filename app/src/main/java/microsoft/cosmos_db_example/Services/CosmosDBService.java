@@ -73,11 +73,11 @@ public class CosmosDBService {
 
     /*public ArrayList<TodoItem> GetTodoItemsAsync()
     {
-        Items = new List<TodoItem>();
+        Items = new ArrayList<TodoItem>();
 
         try
         {
-            var query = client.CreateDocumentQuery<TodoItem>(collectionLink)
+            var query = client.D<TodoItem>(collectionLink)
                     .AsDocumentQuery();
             while (query.HasMoreResults)
             {
@@ -123,7 +123,7 @@ public class CosmosDBService {
         }
     }
 
-    async Task DeleteDocumentCollection()
+    void DeleteDocumentCollection()
     {
         try
         {
