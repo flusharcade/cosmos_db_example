@@ -31,7 +31,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
-import microsoft.cosmos_db_example.Controllers.TodoItemController;
+import microsoft.cosmos_db_example.Controllers.CosmosController;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.R;
 
@@ -40,11 +40,13 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private TodoItemController controller;
+    private CosmosController controller;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
+        controller = CosmosController.getInstance(this);
 
         /**
          * Set up Android CardView/RecycleView
@@ -69,6 +71,8 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
         bFetch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                controller.createDatabase();
+
                 //CosmosDBService service = ServiceFactory.createRetrofitService(CosmosDBService.class, DBConstants.EndpointUrl);
 
                 /*service.getUser(login)
@@ -92,8 +96,6 @@ public class MainActivity extends Activity implements CosmosDelegate {
                         });*/
             }
         });
-
-        controller = TodoItemController.getInstance();
     }
 
     @Override protected void onDestroy() {

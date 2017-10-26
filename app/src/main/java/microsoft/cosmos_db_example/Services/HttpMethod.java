@@ -7,5 +7,6 @@ package microsoft.cosmos_db_example.Services;
 public enum HttpMethod
 {
     GET,
-    POST
+    POST,
+    PUT
 }

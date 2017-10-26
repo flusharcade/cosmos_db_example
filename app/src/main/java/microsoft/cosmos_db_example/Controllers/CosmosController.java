@@ -34,9 +34,10 @@ public class CosmosController {
         _delegate = delegate;
     }
 
-    public void validateProgramCode(final String programCode)
-    {
-        /*_delegate.checkProgramCode(new IAsyncResponse() {
+    public void createDatabase() {
+        _cosmosService.createDocumentCollection();
+
+        /*_cosmosService.checkProgramCode(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
                 ProgramCodeContract contract = (ProgramCodeContract) JSONParser.getInstance().deserialize(output, ProgramCodeContract.class);
