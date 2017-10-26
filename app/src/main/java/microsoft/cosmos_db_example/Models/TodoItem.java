@@ -6,7 +6,13 @@ import java.util.Objects;
  * Created by mww121 on 26/10/17.
  */
 
-//@Document(collection = "mycollection")
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See LICENSE in the project root for
+ * license information.
+ */
+
+@Document(collection = "mycollection")
 public class TodoItem {
     private String id;
     private String description;

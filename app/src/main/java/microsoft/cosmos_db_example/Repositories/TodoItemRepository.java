@@ -6,7 +6,13 @@ package microsoft.cosmos_db_example.Repositories;
  * license information.
  */
 
-/*@Repository
+
+import com.microsoft.azure.spring.data.documentdb.repository.DocumentDbRepository;
+
+import org.springframework.stereotype.Repository;
+
+import microsoft.cosmos_db_example.Models.TodoItem;
+
+@Repository
 public interface TodoItemRepository extends DocumentDbRepository<TodoItem, String> {
 }
-*/
