@@ -8,6 +8,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -15,11 +16,11 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import microsoft.cosmos_db_example.Constants.DBConstants;
+import microsoft.cosmos_db_example.Contracts.DatabaseContract;
 import microsoft.cosmos_db_example.Contracts.DatabasesContract;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.Services.CosmosRxService;
 import microsoft.cosmos_db_example.Services.HttpMethod;
-import microsoft.cosmos_db_example.Services.ICosmosRxService;
 import microsoft.cosmos_db_example.Services.WebServiceFactory;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -30,87 +31,58 @@ import rx.schedulers.Schedulers;
  */
 
 public class CosmosRxController {
-    private CosmosRxService _cosmosService;
-    private CosmosDelegate _delegate;
-
     private static CosmosRxController instance = null;
 
     public static CosmosRxController getInstance(CosmosDelegate delegate) {
         if(instance == null) {
-            instance = new CosmosRxController(delegate);
-        }
-        else {
-            instance.updateDelegate(delegate);
+            instance = new CosmosRxController();
         }
 
         return instance;
     }
 
-    protected CosmosRxController(CosmosDelegate delegate) {
-        _delegate = delegate;
-        _cosmosService = CosmosRxService.getInstance();
-    }
-
-    protected void updateDelegate(CosmosDelegate delegate) {
-        _delegate = delegate;
-    }
-
     // dbs
-    public void getDatabases() {
-        _cosmosService.getDatabases();
-    }
-
-    public Observable<DatabasesContract> getDatabasesTestOne() {
+    public Observable<DatabasesContract> getDatabases() {
         String date = createDate();
         String authString = generateAuthToken(HttpMethod.GET.toString(), "dbs", "", date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
-        ICosmosRxService service = WebServiceFactory.create(ICosmosRxService.class, DBConstants.EndpointUrl,
-                HttpMethod.GET, null, authString, date, null);
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
 
-        return service.getDatabases()
+        return service.getDatabases(date, "2015-08-06", authString)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
-
-                /*.subscribe(new Subscriber<DatabasesContract>() {
-                    @Override
-                    public final void onCompleted() {
-                        // do nothing
-                        Log.e("onError", "Complete");
-                    }
-
-                    @Override
-                    public final void onError(Throwable e) {
-                        Log.e("onError", e.getMessage());
-                    }
-
-                    @Override
-                    public final void onNext(DatabasesContract response) {
-                        //mCardAdapter.addData(response);
-                    }
-                })*/
     }
 
-    /*public void createDatabase(String databaseId) {
-        _cosmosService.createDatabase(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId);
+    public Observable<DatabaseContract> getDatabaseById(String databaseId) {
+        String date = createDate();
+        String authString = generateAuthToken(HttpMethod.POST.toString(), "dbs", "", date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.getDatabaseById(databaseId, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void getDatabase(String databaseId) {
-        _cosmosService.getDatabase(new IAsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                String test = "";
-            }
-        }, databaseId);
+    public Observable<Object> createDatabase(String databaseId) {
+        String date = createDate();
+        String authString = generateAuthToken(HttpMethod.POST.toString(), "dbs", "", date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("id", databaseId);
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.createDatabase(params, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     // colls
-    public void getCollections(String databaseId) {
+    /*public void getCollections(String databaseId) {
         _cosmosService.getCollections(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {
