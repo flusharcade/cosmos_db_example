@@ -87,6 +87,61 @@ public class CosmosRxController {
     }
 
     // colls
+    public Observable<Object> getCollections(String databaseId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls", databaseId);
+        String resourceId = (idBased) ? String.format("dbs/%s", databaseId) : databaseId.toLowerCase(Locale.ROOT);
+
+        String authString = generateAuthToken(HttpMethod.GET.toString(), "colls", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.getCollections(databaseId, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<Object> getCollectionById(String databaseId, String collectionId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls/%s", databaseId, collectionId);
+        String resourceId = idBased ? resourceLink : collectionId.toLowerCase(Locale.ROOT);
+
+        String authString = generateAuthToken(HttpMethod.GET.toString(), "colls", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", databaseId);
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.getCollectionById(databaseId, collectionId, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<Object> createCollection(String databaseId, String collectionId) {
+        String date = createDate();
+
+        String resourceLink = String.format("dbs/%s/colls", databaseId);
+        String resourceId = idBased ? String.format("dbs/%s", databaseId) : collectionId.toLowerCase(Locale.ROOT);
+
+        String authString = generateAuthToken(HttpMethod.POST.toString(), "colls", resourceId, date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("id", collectionId);
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.createCollection(databaseId, params, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    // colls
     /*public void getCollections(String databaseId) {
         _cosmosService.getCollections(new IAsyncResponse() {
             @Override
