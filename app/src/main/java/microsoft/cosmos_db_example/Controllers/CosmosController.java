@@ -111,7 +111,7 @@ public class CosmosController {
         }, databaseId, collectionId, documentId);
     }
 
-    public void createDocument(String databaseId, String collectionId, String documentId, HashMap<String, String> documentParams) {
+    public void createDocument(String databaseId, String collectionId, String documentId, HashMap<String, Object> documentParams) {
         _cosmosService.createDocument(new IAsyncResponse() {
             @Override
             public void processFinish(String output) {

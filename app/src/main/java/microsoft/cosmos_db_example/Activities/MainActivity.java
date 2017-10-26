@@ -21,6 +21,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
 import microsoft.cosmos_db_example.Controllers.App;
 import microsoft.cosmos_db_example.Controllers.CosmosController;
@@ -70,16 +74,16 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
                 try
                 {
-                    /*JSONObject document = new JSONObject();
+                    JSONObject document = new JSONObject();
                     document.put("filename", "new_document");
                     document.put("user", "michael");
 
-                    HashMap<String, String> params = new HashMap<String, String>();
+                    HashMap<String, Object> params = new HashMap<String, Object>();
                     params.put("document", document.toString());
 
-                    controller.createDocument("testDb", "example", "wiggum", params);*/
+                    //controller.createDocument("testDb", "example", "wiggum", params);
 
-                    _rxController.getDocuments("example", "test")
+                    _rxController.createDocument("testDb", "example", "wiggum1", params)
                             .subscribe(x -> {
                                 Log.e("onError", "WIGGUM");
                             });

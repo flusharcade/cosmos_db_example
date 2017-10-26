@@ -66,7 +66,7 @@ public class CosmosService extends BaseWebService {
         authString = generateAuthToken(HttpMethod.POST.toString(), "dbs", "", date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
-        HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("id", databaseId);
 
         Send(delegate, DBConstants.EndpointUrl,"dbs", HttpMethod.POST, params, authString, date, null);
@@ -108,7 +108,7 @@ public class CosmosService extends BaseWebService {
         authString = generateAuthToken(HttpMethod.POST.toString(), "colls", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
-        HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("id", collectionId);
 
         Send(delegate, DBConstants.EndpointUrl, resourceLink, HttpMethod.POST, params, authString, date,null);
@@ -143,7 +143,7 @@ public class CosmosService extends BaseWebService {
 
     // create a document in a collection in a database
     public void createDocument(IAsyncResponse delegate, String databaseId, String collectionId, String documentId,
-                                           HashMap<String, String> documentParams) {
+                                           HashMap<String, Object> documentParams) {
         String date = createDate();
 
         String resourceLink = String.format("dbs/%s/colls/%s/docs", databaseId, collectionId, documentId);
@@ -152,13 +152,13 @@ public class CosmosService extends BaseWebService {
         authString = generateAuthToken(HttpMethod.POST.toString(), "docs", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
-        HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("id", documentId);
 
         // for all document parameters
-        for (Map.Entry<String, String> entry : documentParams.entrySet()) {
+        for (Map.Entry<String, Object> entry : documentParams.entrySet()) {
             String key = entry.getKey();
-            String value = entry.getValue();
+            Object value = entry.getValue();
 
             params.put(key, value);
         }
@@ -206,7 +206,7 @@ public class CosmosService extends BaseWebService {
         authString = generateAuthToken(HttpMethod.POST.toString(), "attachments", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
-        HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("id", attachmentId);
         params.put("contentType", attachmentContentType);
         params.put("media", media);
@@ -224,7 +224,7 @@ public class CosmosService extends BaseWebService {
         authString = generateAuthToken(HttpMethod.GET.toString(), "docs", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
-        HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("id", databaseId);
 
         Send(delegate, DBConstants.EndpointUrl,resourceLink, HttpMethod.GET, params, authString, date, query);

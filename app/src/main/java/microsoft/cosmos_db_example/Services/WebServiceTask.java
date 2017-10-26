@@ -26,7 +26,7 @@ public class WebServiceTask extends AsyncTask<String, Void, String>
 
     private HttpMethod _method;
 
-    private HashMap<String, String> _parameters;
+    private HashMap<String, Object> _parameters;
 
     private RequestBody _body;
 
@@ -36,7 +36,7 @@ public class WebServiceTask extends AsyncTask<String, Void, String>
 
     private String _query;
 
-    WebServiceTask(IAsyncResponse delegate, HttpMethod method, HashMap<String, String> parameters,
+    WebServiceTask(IAsyncResponse delegate, HttpMethod method, HashMap<String, Object> parameters,
                    String authString, String date, String query) {
         _delegate = delegate;
         _method = method;

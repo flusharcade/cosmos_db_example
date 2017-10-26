@@ -7,7 +7,7 @@ import java.util.TimeZone;
 
 public class BaseWebService {
     public void Send(IAsyncResponse delegate, String baseUrl, String url, HttpMethod method,
-                     HashMap<String, String> parameters, String authString, String date, String query) {
+                     HashMap<String, Object> parameters, String authString, String date, String query) {
         new WebServiceTask(delegate, method, parameters, authString, date, query).execute(new String[] { String.format("%s/%s", baseUrl, url)});
     }
 
