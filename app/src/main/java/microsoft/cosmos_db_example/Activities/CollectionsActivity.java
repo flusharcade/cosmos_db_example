@@ -15,6 +15,7 @@ package microsoft.cosmos_db_example.Activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +33,6 @@ import microsoft.cosmos_db_example.Controllers.CosmosRxController;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.Models.DocumentCollection;
 import microsoft.cosmos_db_example.R;
-
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -68,6 +68,10 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
                 vHolder.idTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Intent intent = new Intent(getBaseContext(), DocumentsActivity.class);
+                        intent.putExtra("db_id", _databaseId);
+                        intent.putExtra("coll_id", coll.getId());
+                        startActivity(intent);
                     }
                 });
 

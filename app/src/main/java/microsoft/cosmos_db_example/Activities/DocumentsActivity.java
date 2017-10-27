@@ -25,11 +25,11 @@ import android.widget.TextView;
 
 import microsoft.cosmos_db_example.Adapter.Callback;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
-import microsoft.cosmos_db_example.Adapter.DocumentCollectionViewHolder;
+import microsoft.cosmos_db_example.Adapter.DocumentViewHolder;
 import microsoft.cosmos_db_example.Controllers.App;
 import microsoft.cosmos_db_example.Controllers.CosmosRxController;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
-import microsoft.cosmos_db_example.Models.DocumentCollection;
+import microsoft.cosmos_db_example.Models.Document;
 import microsoft.cosmos_db_example.R;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -47,18 +47,18 @@ public class DocumentsActivity extends Activity implements CosmosDelegate {
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.collections_activity);
+        setContentView(R.layout.documents_activity);
 
         _rxController = CosmosRxController.getInstance(this);
 
         LinearLayoutManager linearLayoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
-        _adapter = new CardAdapter(R.layout.database_view, new Callback<Object>() {
+        _adapter = new CardAdapter(R.layout.document_view, new Callback<Object>() {
             @Override
             public Void call() {
-                DocumentCollection coll = (DocumentCollection)this._result;
-                DocumentCollectionViewHolder vHolder = (DocumentCollectionViewHolder)this._viewHolder;
+                Document coll = (Document)this._result;
+                DocumentViewHolder vHolder = (DocumentViewHolder)this._viewHolder;
 
                 vHolder.idTextView.setText(coll.getId());
                 vHolder.ridTextView.setText(coll.getRid());
@@ -73,18 +73,20 @@ public class DocumentsActivity extends Activity implements CosmosDelegate {
 
                 return null;
             }
-        }, DocumentCollectionViewHolder.class, this);
+        }, DocumentViewHolder.class, this);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(_adapter);
 
-        TextView databaseIdTextView = (TextView) findViewById(R.id.databaseId);
+        TextView collectionIdTextView = (TextView) findViewById(R.id.collectionId);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             _databaseId = extras.getString("db_id");
-            databaseIdTextView.setText(_databaseId);
+            _collectionId = extras.getString("coll_id");
+
+            collectionIdTextView.setText(_collectionId);
         }
 
         Button clearButton = (Button) findViewById(R.id.button_clear);
