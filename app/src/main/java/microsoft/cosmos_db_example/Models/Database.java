@@ -8,6 +8,7 @@ package microsoft.cosmos_db_example.Models;
 
 public class Database {
     private String id;
+    private String rid;
     private String self;
     private String etag;
     private String colls;
@@ -18,7 +19,7 @@ public class Database {
 
     }
 
-    public Database(String id, String self, String etag, String colls, String users, int ts) {
+    public Database(String id, String rid, String self, String etag, String colls, String users, int ts) {
         this.id = id;
         this.self = self;
         this.etag = etag;
@@ -30,6 +31,10 @@ public class Database {
     public String getId() { return this.id; }
 
     public void setId(String id) { this.id = id; }
+
+    public String getRid() { return this.rid; }
+
+    public void setRid(String rid) { this.rid = rid; }
 
     public String getSelf() { return this.self; }
 

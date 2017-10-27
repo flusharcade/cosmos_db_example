@@ -12,6 +12,7 @@ import microsoft.cosmos_db_example.R;
 
 public class DatabaseViewHolder extends RecyclerView.ViewHolder {
     public TextView idTextView;
+    public TextView ridTextView;
     public TextView selfTextView;
     public TextView eTagTextView;
     public TextView collsTextView;
@@ -22,6 +23,7 @@ public class DatabaseViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
 
         idTextView = (TextView) itemView.findViewById(R.id.id);
+        ridTextView = (TextView) itemView.findViewById(R.id.rid);
         selfTextView = (TextView) itemView.findViewById(R.id.self);
         eTagTextView = (TextView) itemView.findViewById(R.id.eTag);
         collsTextView = (TextView) itemView.findViewById(R.id.colls);

@@ -64,11 +64,11 @@ public class MainActivity extends Activity implements CosmosDelegate {
                 DatabaseViewHolder vHolder = (DatabaseViewHolder)this._viewHolder;
 
                 vHolder.idTextView.setText(db.getId());
+                vHolder.ridTextView.setText(db.getRid());
                 vHolder.selfTextView.setText(db.getSelf());
                 vHolder.eTagTextView.setText(db.getEtag());
                 vHolder.collsTextView.setText(db.getColls());
                 vHolder.usersTextView.setText(db.getUsers());
-                vHolder.tsTextView.setText(db.getTs());
 
                 return null;
             }
@@ -125,7 +125,7 @@ public class MainActivity extends Activity implements CosmosDelegate {
                                 ArrayList<DatabaseContract> databases = x.getDatabases();
 
                                 for (DatabaseContract contract: x.getDatabases()) {
-                                    _adapter.addData(new Database(contract.getId(), contract.getSelf(),
+                                    _adapter.addData(new Database(contract.getId(), contract.getRid(), contract.getSelf(),
                                             contract.getEtag(), contract.getColls(), contract.getUsers(), contract.getTs()));
                                 }
                             });
