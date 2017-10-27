@@ -19,7 +19,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -28,15 +27,12 @@ import java.util.HashMap;
 import microsoft.cosmos_db_example.Adapter.Callback;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
 import microsoft.cosmos_db_example.Adapter.DatabaseViewHolder;
-import microsoft.cosmos_db_example.Contracts.DatabaseContract;
 import microsoft.cosmos_db_example.Controllers.App;
 import microsoft.cosmos_db_example.Controllers.CosmosController;
 import microsoft.cosmos_db_example.Controllers.CosmosRxController;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.Models.Database;
 import microsoft.cosmos_db_example.R;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends Activity implements CosmosDelegate {
     private static final String TAG = "MainActivity";
@@ -121,7 +117,7 @@ public class MainActivity extends Activity implements CosmosDelegate {
                                 Log.e("onError", "WIGGUM");
                             });*/
 
-                    _rxController.getDatabases()
+                    /*_rxController.getDatabases()
                             // Run on a background thread
                             .subscribeOn(Schedulers.io())
                             // Be notified on the main thread
@@ -137,7 +133,9 @@ public class MainActivity extends Activity implements CosmosDelegate {
                                 }
 
                                 dialog.cancel();
-                            });
+                            });*/
+
+                    controller.getDocuments("example", "example");
 
                     //controller.getAttachment("testDb", "example", "wiggum", "imageId1");
                 }

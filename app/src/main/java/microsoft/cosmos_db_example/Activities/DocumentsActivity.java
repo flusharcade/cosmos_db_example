@@ -26,17 +26,15 @@ import android.widget.TextView;
 import microsoft.cosmos_db_example.Adapter.Callback;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
 import microsoft.cosmos_db_example.Adapter.DocumentCollectionViewHolder;
-import microsoft.cosmos_db_example.Contracts.DocumentCollectionContract;
 import microsoft.cosmos_db_example.Controllers.App;
 import microsoft.cosmos_db_example.Controllers.CosmosRxController;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.Models.DocumentCollection;
 import microsoft.cosmos_db_example.R;
-
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class CollectionsActivity extends Activity implements CosmosDelegate {
+public class DocumentsActivity extends Activity implements CosmosDelegate {
     private static final String TAG = "CollectionsActivity";
 
     private CardAdapter _adapter;
@@ -44,6 +42,8 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
     private CosmosRxController _rxController;
 
     private String _databaseId;
+
+    private String _collectionId;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +54,7 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
         LinearLayoutManager linearLayoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
-        _adapter = new CardAdapter(R.layout.collection_view, new Callback<Object>() {
+        _adapter = new CardAdapter(R.layout.database_view, new Callback<Object>() {
             @Override
             public Void call() {
                 DocumentCollection coll = (DocumentCollection)this._result;
@@ -99,7 +99,7 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final ProgressDialog dialog = ProgressDialog.show(CollectionsActivity.this, "", "Loading. Please wait...", true);
+                final ProgressDialog dialog = ProgressDialog.show(DocumentsActivity.this, "", "Loading. Please wait...", true);
                 _rxController.deleteDatabase(_databaseId)
                         // Run on a background thread
                         .subscribeOn(Schedulers.io())
@@ -126,9 +126,9 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
             public void onClick(View v) {
                 try
                 {
-                    final ProgressDialog dialog = ProgressDialog.show(CollectionsActivity.this, "", "Loading. Please wait...", true);
+                    final ProgressDialog dialog = ProgressDialog.show(DocumentsActivity.this, "", "Loading. Please wait...", true);
 
-                    _rxController.getCollections(_databaseId)
+                    _rxController.getDocuments(_databaseId, _collectionId)
                             // Run on a background thread
                             .subscribeOn(Schedulers.io())
                             // Be notified on the main thread
@@ -137,14 +137,14 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
                                 // clear current list
                                 _adapter.clear();
 
-                                Log.e(TAG, "_rxController.getCollections(_databaseId) - finished.");
+                                Log.e(TAG, "_rxController.getDocuments(_databaseId, _collectionId) finished.");
 
-                                for (DocumentCollectionContract contract: x.getDocumentCollections()) {
-                                    String partitionKey = contract.getPartitionKey() == null ? "" : contract.getPartitionKey().getKind();
-
-                                    _adapter.addData(new DocumentCollection(contract.getId(), contract.getRid(), contract.getSelf(),
-                                            contract.getEtag(), partitionKey));
-                                }
+//                                for (DocumentCollectionContract contract: x.getDocumentCollections()) {
+//                                    String partitionKey = contract.getPartitionKey() == null ? "" : contract.getPartitionKey().getKind();
+//
+//                                    _adapter.addData(new DocumentCollection(contract.getId(), contract.getRid(), contract.getSelf(),
+//                                            contract.getEtag(), partitionKey));
+//                                }
 
                                 dialog.cancel();
                             });

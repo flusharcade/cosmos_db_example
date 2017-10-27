@@ -25,7 +25,7 @@
                 android:layout_height="200dp"
                 android:layout_width="wrap_content"
                 android:adjustViewBounds="true"
-                android:src="@drawable/collection" />
+                android:src="@drawable/document" />
 
             <TextView
                 android:id="@+id/id"
