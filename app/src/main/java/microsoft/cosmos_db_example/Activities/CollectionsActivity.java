@@ -65,7 +65,7 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
                 vHolder.selfTextView.setText(coll.getSelf());
                 vHolder.eTagTextView.setText(coll.getEtag());
 
-                vHolder.idTextView.setOnClickListener(new View.OnClickListener() {
+                vHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getBaseContext(), DocumentsActivity.class);
