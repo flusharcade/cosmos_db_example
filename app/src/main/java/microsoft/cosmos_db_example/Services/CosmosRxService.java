@@ -2,6 +2,7 @@ package microsoft.cosmos_db_example.Services;
 
 import java.util.HashMap;
 
+import microsoft.cosmos_db_example.Contracts.CollectionsContract;
 import microsoft.cosmos_db_example.Contracts.DatabaseContract;
 import microsoft.cosmos_db_example.Contracts.DatabasesContract;
 import retrofit.http.Body;
@@ -29,8 +30,8 @@ public interface CosmosRxService {
                                                 @Header("x-ms-version") String version, @Header("authorization") String authString);
 
     @GET("/dbs/{dbid}/colls")
-    Observable<Object> getCollections(@Path("dbid") String databaseId, @Header("x-ms-date") String date,
-                                               @Header("x-ms-version") String version, @Header("authorization") String authString);
+    Observable<CollectionsContract> getCollections(@Path("dbid") String databaseId, @Header("x-ms-date") String date,
+                                                   @Header("x-ms-version") String version, @Header("authorization") String authString);
 
     @GET("/dbs/{dbid}/colls/{collid}")
     Observable<Object> getCollectionById(@Path("dbid") String databaseId, @Path("collid") String collectionId,

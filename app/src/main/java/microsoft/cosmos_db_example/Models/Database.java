@@ -15,10 +15,6 @@ public class Database {
     private String users;
     private int ts;
 
-    public Database() {
-
-    }
-
     public Database(String id, String rid, String self, String etag, String colls, String users, int ts) {
         this.id = id;
         this.self = self;

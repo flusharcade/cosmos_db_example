@@ -19,6 +19,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import microsoft.cosmos_db_example.Constants.DBConstants;
+import microsoft.cosmos_db_example.Contracts.CollectionsContract;
 import microsoft.cosmos_db_example.Contracts.DatabaseContract;
 import microsoft.cosmos_db_example.Contracts.DatabasesContract;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
@@ -89,8 +90,21 @@ public class CosmosRxController {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    // to do
+    public Observable<DatabasesContract> deleteDatabase(String databaseId) {
+        String date = createDate();
+        String authString = generateAuthToken(HttpMethod.GET.toString(), "dbs", "", date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.getDatabases(date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     // colls
-    public Observable<Object> getCollections(String databaseId) {
+    public Observable<CollectionsContract> getCollections(String databaseId) {
         String date = createDate();
 
         String resourceLink = String.format("dbs/%s/colls", databaseId);
@@ -140,6 +154,19 @@ public class CosmosRxController {
         CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
 
         return service.createCollection(databaseId, params, date, "2015-08-06", authString)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    // to do
+    public Observable<DatabasesContract> deleteCollection(String databaseId, String collectionId) {
+        String date = createDate();
+        String authString = generateAuthToken(HttpMethod.GET.toString(), "dbs", "", date,
+                DBConstants.PrimaryKey, "master", "1.0");
+
+        CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
+
+        return service.getDatabases(date, "2015-08-06", authString)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }

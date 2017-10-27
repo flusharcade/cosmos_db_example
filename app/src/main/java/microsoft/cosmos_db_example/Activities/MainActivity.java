@@ -23,7 +23,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import microsoft.cosmos_db_example.Adapter.Callback;
@@ -75,7 +74,9 @@ public class MainActivity extends Activity implements CosmosDelegate {
                 vHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(MainActivity.this, CollectionsActivity.class));
+                        Intent intent = new Intent(getBaseContext(), CollectionsActivity.class);
+                        intent.putExtra("db_id", db.getId());
+                        startActivity(intent);
                     }
                 });
 
@@ -126,9 +127,9 @@ public class MainActivity extends Activity implements CosmosDelegate {
                             // Be notified on the main thread
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(x -> {
-                                Log.e(TAG, "_rxController.getDatabases() - finished.");
+                                _adapter.clear();
 
-                                ArrayList<DatabaseContract> databases = x.getDatabases();
+                                Log.e(TAG, "_rxController.getDatabases() - finished.");
 
                                 for (DatabaseContract contract: x.getDatabases()) {
                                     _adapter.addData(new Database(contract.getId(), contract.getRid(), contract.getSelf(),
