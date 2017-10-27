@@ -54,6 +54,9 @@ public class MainActivity extends Activity implements CosmosDelegate {
         _rxController = CosmosRxController.getInstance(this);
         controller = CosmosController.getInstance(this);
 
+        LinearLayoutManager linearLayoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
         _adapter = new CardAdapter(R.layout.database_view, new Callback<Object>() {
             @Override
             public Void call() {
@@ -61,21 +64,19 @@ public class MainActivity extends Activity implements CosmosDelegate {
                 DatabaseViewHolder vHolder = (DatabaseViewHolder)this._viewHolder;
 
                 vHolder.idTextView.setText(db.getId());
-                vHolder.descriptionTextView.setText("repos: " + db.getEtag());
-                vHolder.ownerTextView.setText("blog: " + db.getSelf());
+                vHolder.selfTextView.setText(db.getSelf());
+                vHolder.eTagTextView.setText(db.getEtag());
+                vHolder.collsTextView.setText(db.getColls());
+                vHolder.usersTextView.setText(db.getUsers());
+                vHolder.tsTextView.setText(db.getTs());
 
                 return null;
             }
         }, DatabaseViewHolder.class, this);
 
-        /**
-         * Set up Android CardView/RecycleView
-         */
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mRecyclerView.setAdapter(_adapter);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(_adapter);
 
         /**
          * START: button set up

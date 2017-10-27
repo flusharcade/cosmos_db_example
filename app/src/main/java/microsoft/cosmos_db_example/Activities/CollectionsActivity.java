@@ -57,8 +57,6 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
                 DatabaseViewHolder vHolder = (DatabaseViewHolder)this._viewHolder;
 
                 vHolder.idTextView.setText(db.getId());
-                vHolder.descriptionTextView.setText("repos: " + db.getEtag());
-                vHolder.ownerTextView.setText("blog: " + db.getSelf());
 
                 return null;
             }

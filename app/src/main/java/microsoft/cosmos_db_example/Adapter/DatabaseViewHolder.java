@@ -12,14 +12,20 @@ import microsoft.cosmos_db_example.R;
 
 public class DatabaseViewHolder extends RecyclerView.ViewHolder {
     public TextView idTextView;
-    public TextView descriptionTextView;
-    public TextView ownerTextView;
+    public TextView selfTextView;
+    public TextView eTagTextView;
+    public TextView collsTextView;
+    public TextView usersTextView;
+    public TextView tsTextView;
 
     public DatabaseViewHolder(View itemView){
         super(itemView);
 
         idTextView = (TextView) itemView.findViewById(R.id.id);
-        descriptionTextView = (TextView) itemView.findViewById(R.id.description);
-        ownerTextView = (TextView) itemView.findViewById(R.id.owner);
+        selfTextView = (TextView) itemView.findViewById(R.id.self);
+        eTagTextView = (TextView) itemView.findViewById(R.id.eTag);
+        collsTextView = (TextView) itemView.findViewById(R.id.colls);
+        usersTextView = (TextView) itemView.findViewById(R.id.users);
+        tsTextView = (TextView) itemView.findViewById(R.id.ts);
     }
 }
