@@ -17,30 +17,26 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import microsoft.cosmos_db_example.Adapter.Callback;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
 import microsoft.cosmos_db_example.Adapter.DatabaseViewHolder;
-import microsoft.cosmos_db_example.Contracts.DatabaseContract;
 import microsoft.cosmos_db_example.Controllers.App;
 import microsoft.cosmos_db_example.Controllers.CosmosController;
 import microsoft.cosmos_db_example.Controllers.CosmosRxController;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.Models.Database;
 import microsoft.cosmos_db_example.R;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
-public class MainActivity extends Activity implements CosmosDelegate {
+public class CollectionsActivity extends Activity implements CosmosDelegate {
     private static final String TAG = "MainActivity";
 
     private CardAdapter _adapter;
+
     //private final CompositeDisposable disposables = new CompositeDisposable();
 
     private CosmosController controller;
@@ -113,21 +109,8 @@ public class MainActivity extends Activity implements CosmosDelegate {
                                 Log.e("onError", "WIGGUM");
                             });*/
 
-                    _rxController.getDatabases()
-                            // Run on a background thread
-                            .subscribeOn(Schedulers.io())
-                            // Be notified on the main thread
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(x -> {
-                                Log.e(TAG, "_rxController.getDatabases() - finished.");
-
-                                ArrayList<DatabaseContract> databases = x.getDatabases();
-
-                                for (DatabaseContract contract: x.getDatabases()) {
-                                    _adapter.addData(new Database(contract.getId(), contract.getSelf(),
-                                            contract.getEtag(), contract.getColls(), contract.getUsers(), contract.getTs()));
-                                }
-                            });
+                    controller.executeQuery("testDb", "example", "SELECT * FROM root WHERE (root.Author.id = @author)",
+                            params);
 
                     //controller.getAttachment("testDb", "example", "wiggum", "imageId1");
                 }

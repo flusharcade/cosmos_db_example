@@ -1,67 +1,70 @@
 package microsoft.cosmos_db_example.Adapter;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import microsoft.cosmos_db_example.Models.TodoItem;
-import microsoft.cosmos_db_example.R;
+public class CardAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
+    private List<T> _mItems;
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
-    List<TodoItem> mItems;
+    private int _viewLayoutId;
+    private ViewHolder _viewHolder;
 
-    public CardAdapter() {
+    private Callback<Object> _onBindViewHolderMethod;
+    private Class<?> _viewHolderClazz;
+    private Activity _activity;
+
+    public CardAdapter(int viewLayoutId, Callback<Object> onBindViewHolderMethod, Class<?> viewHolderClazz, Activity activity) {
         super();
-        mItems = new ArrayList<TodoItem>();
+
+        _viewLayoutId = viewLayoutId;
+        _onBindViewHolderMethod = onBindViewHolderMethod;
+        _viewHolderClazz = viewHolderClazz;
+        _activity = activity;
+
+        _mItems = new ArrayList<T>();
     }
 
-    public void addData(TodoItem TodoItem) {
-        mItems.add(TodoItem);
+    public void addData(T item) {
+        _mItems.add(item);
+
         notifyDataSetChanged();
     }
 
     public void clear() {
-        mItems.clear();
+        _mItems.clear();
         notifyDataSetChanged();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.recycler_view, viewGroup, false);
-        ViewHolder viewHolder = new ViewHolder(v);
-        return viewHolder;
+                .inflate(_viewLayoutId, viewGroup, false);
+
+        _viewHolder = (ViewHolder)ViewHolderFactory.create(_viewHolderClazz, v);
+
+        return _viewHolder;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        TodoItem TodoItem = mItems.get(i);
-        viewHolder.idTextView.setText(TodoItem.getID());
-        viewHolder.descriptionTextView.setText("repos: " + TodoItem.getDescription());
-        viewHolder.ownerTextView.setText("blog: " + TodoItem.getOwner());
+        Object item = _mItems.get(i);
+
+        _onBindViewHolderMethod.setResult(item, viewHolder);
+
+        if (item != null) {
+            _onBindViewHolderMethod.call();
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView idTextView;
-        public TextView descriptionTextView;
-        public TextView ownerTextView;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-
-            idTextView = (TextView) itemView.findViewById(R.id.id);
-            descriptionTextView = (TextView) itemView.findViewById(R.id.description);
-            ownerTextView = (TextView) itemView.findViewById(R.id.owner);
-        }
+        return _mItems.size();
     }
 }
