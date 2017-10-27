@@ -93,7 +93,7 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
 
         Button clearButton = (Button) findViewById(R.id.button_clear);
         Button fetchButton = (Button) findViewById(R.id.button_fetch);
-        Button deleteButton = (Button) findViewById(R.id.button_clear);
+        Button deleteButton = (Button) findViewById(R.id.button_delete);
 
         clearButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -103,23 +103,20 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final ProgressDialog dialog = ProgressDialog.show(CollectionsActivity.this, "", "Loading. Please wait...", true);
+                final ProgressDialog dialog = ProgressDialog.show(CollectionsActivity.this, "", "Deleting. Please wait...", true);
+
                 _rxController.deleteDatabase(_databaseId)
                         // Run on a background thread
                         .subscribeOn(Schedulers.io())
                         // Be notified on the main thread
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(x -> {
-                            Log.e(TAG, "_rxController.deleteDatabases(_databaseId) - finished.");
-
-//                                ArrayList<DatabaseContract> databases = x.get();
-//
-//                                for (DatabaseContract contract: x.getDatabases()) {
-//                                    _adapter.addData(new Database(contract.getId(), contract.getRid(), contract.getSelf(),
-//                                            contract.getEtag(), contract.getColls(), contract.getUsers(), contract.getTs()));
-//                                }
+                            Log.e(TAG, "_rxController.deleteDatabase(_databaseId) - finished.");
 
                             dialog.cancel();
+
+                            // revert back to database page
+                            finish();
                         });
 
                 _adapter.clear();

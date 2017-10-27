@@ -38,8 +38,8 @@ import microsoft.cosmos_db_example.R;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends Activity implements CosmosDelegate {
-    private static final String TAG = "MainActivity";
+public class DatabaseActivity extends Activity implements CosmosDelegate {
+    private static final String TAG = "DatabaseActivity";
 
     private CardAdapter _adapter;
     //private final CompositeDisposable disposables = new CompositeDisposable();
@@ -100,7 +100,7 @@ public class MainActivity extends Activity implements CosmosDelegate {
             public void onClick(View v) {
                 try
                 {
-                    final ProgressDialog dialog = ProgressDialog.show(MainActivity.this, "", "Loading. Please wait...", true);
+                    final ProgressDialog dialog = ProgressDialog.show(DatabaseActivity.this, "", "Loading. Please wait...", true);
 
                     /*JSONObject document = new JSONObject();
                     document.put("filename", "new_document");

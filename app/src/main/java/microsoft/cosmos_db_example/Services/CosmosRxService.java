@@ -6,6 +6,7 @@ import microsoft.cosmos_db_example.Contracts.CollectionsContract;
 import microsoft.cosmos_db_example.Contracts.DatabaseContract;
 import microsoft.cosmos_db_example.Contracts.DatabasesContract;
 import retrofit.http.Body;
+import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.POST;
@@ -29,6 +30,10 @@ public interface CosmosRxService {
     Observable<Object> createDatabase(@Body HashMap<String, Object> body, @Header("x-ms-date") String date,
                                                 @Header("x-ms-version") String version, @Header("authorization") String authString);
 
+    @DELETE("/dbs/{dbid}")
+    Observable<Object> deleteDatabase(@Path("dbid") String databaseId, @Header("x-ms-date") String date,
+                                                 @Header("x-ms-version") String version, @Header("authorization") String authString);
+
     @GET("/dbs/{dbid}/colls")
     Observable<CollectionsContract> getCollections(@Path("dbid") String databaseId, @Header("x-ms-date") String date,
                                                    @Header("x-ms-version") String version, @Header("authorization") String authString);
@@ -42,6 +47,11 @@ public interface CosmosRxService {
     Observable<Object> createCollection(@Path("dbid") String databaseId, @Body HashMap<String, Object> body,
                                       @Header("x-ms-date") String date, @Header("x-ms-version") String version,
                                       @Header("authorization") String authString);
+
+    @DELETE("/dbs/{dbid}/colls/{collid}")
+    Observable<Object> deleteCollection(@Path("dbid") String databaseId, @Path("collid") String collectionId,
+                                         @Header("x-ms-date") String date, @Header("x-ms-version") String version,
+                                         @Header("authorization") String authString);
 
     @GET("/dbs/{dbid}/colls/{collid}/docs")
     Observable<Object> getDocuments(@Path("dbid") String databaseId, @Path("collid") String collectionId,

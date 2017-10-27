@@ -91,7 +91,7 @@ public class DocumentsActivity extends Activity implements CosmosDelegate {
 
         Button clearButton = (Button) findViewById(R.id.button_clear);
         Button fetchButton = (Button) findViewById(R.id.button_fetch);
-        Button deleteButton = (Button) findViewById(R.id.button_clear);
+        Button deleteButton = (Button) findViewById(R.id.button_delete);
 
         clearButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

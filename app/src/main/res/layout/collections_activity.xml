@@ -57,7 +57,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/delete"
+        android:id="@+id/button_delete"
         android:layout_gravity="center_horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

@@ -90,15 +90,19 @@ public class CosmosRxController {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    // to do
-    public Observable<DatabasesContract> deleteDatabase(String databaseId) {
+    // deletes a database
+    public Observable<Object> deleteDatabase(String databaseId) {
         String date = createDate();
-        String authString = generateAuthToken(HttpMethod.GET.toString(), "dbs", "", date,
+
+        String resourceLink = String.format("dbs/%s", databaseId);
+        String resourceId = idBased ? resourceLink : databaseId;
+
+        String authString = generateAuthToken(HttpMethod.DELETE.toString(), "dbs", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
 
         CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
 
-        return service.getDatabases(date, "2015-08-06", authString)
+        return service.deleteDatabase(databaseId, date, "2015-08-06", authString)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -159,14 +163,21 @@ public class CosmosRxController {
     }
 
     // to do
-    public Observable<DatabasesContract> deleteCollection(String databaseId, String collectionId) {
+    public Observable<Object> deleteCollection(String databaseId, String collectionId) {
         String date = createDate();
-        String authString = generateAuthToken(HttpMethod.GET.toString(), "dbs", "", date,
+
+        String resourceLink = String.format("dbs/%s/colls/%s", databaseId, collectionId);
+        String resourceId = idBased ? resourceLink : collectionId.toLowerCase(Locale.ROOT);
+
+        String authString = generateAuthToken(HttpMethod.GET.toString(), "colls", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", databaseId);
 
         CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
 
-        return service.getDatabases(date, "2015-08-06", authString)
+        return service.deleteCollection(databaseId, collectionId, date, "2015-08-06", authString)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
