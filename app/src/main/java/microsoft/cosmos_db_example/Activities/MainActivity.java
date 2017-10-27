@@ -15,6 +15,7 @@ package microsoft.cosmos_db_example.Activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -71,6 +72,13 @@ public class MainActivity extends Activity implements CosmosDelegate {
                 vHolder.collsTextView.setText(db.getColls());
                 vHolder.usersTextView.setText(db.getUsers());
 
+                vHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(MainActivity.this, CollectionsActivity.class));
+                    }
+                });
+
                 return null;
             }
         }, DatabaseViewHolder.class, this);
@@ -79,9 +87,6 @@ public class MainActivity extends Activity implements CosmosDelegate {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(_adapter);
 
-        /**
-         * START: button set up
-         */
         Button bClear = (Button) findViewById(R.id.button_clear);
         Button bFetch = (Button) findViewById(R.id.button_fetch);
         bClear.setOnClickListener(new View.OnClickListener() {
@@ -92,8 +97,6 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
         bFetch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //controller.getDatabases();
-
                 try
                 {
                     final ProgressDialog dialog = ProgressDialog.show(MainActivity.this, "", "Loading. Please wait...", true);

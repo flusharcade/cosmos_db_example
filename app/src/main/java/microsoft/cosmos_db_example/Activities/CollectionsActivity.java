@@ -14,29 +14,35 @@
 package microsoft.cosmos_db_example.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import microsoft.cosmos_db_example.Adapter.Callback;
 import microsoft.cosmos_db_example.Adapter.CardAdapter;
 import microsoft.cosmos_db_example.Adapter.DatabaseViewHolder;
+import microsoft.cosmos_db_example.Contracts.DatabaseContract;
 import microsoft.cosmos_db_example.Controllers.App;
 import microsoft.cosmos_db_example.Controllers.CosmosController;
 import microsoft.cosmos_db_example.Controllers.CosmosRxController;
 import microsoft.cosmos_db_example.Delegates.CosmosDelegate;
 import microsoft.cosmos_db_example.Models.Database;
 import microsoft.cosmos_db_example.R;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class CollectionsActivity extends Activity implements CosmosDelegate {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "CollectionsActivity";
 
     private CardAdapter _adapter;
-
     //private final CompositeDisposable disposables = new CompositeDisposable();
 
     private CosmosController controller;
@@ -50,6 +56,9 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
         _rxController = CosmosRxController.getInstance(this);
         controller = CosmosController.getInstance(this);
 
+        LinearLayoutManager linearLayoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
         _adapter = new CardAdapter(R.layout.database_view, new Callback<Object>() {
             @Override
             public Void call() {
@@ -57,19 +66,26 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
                 DatabaseViewHolder vHolder = (DatabaseViewHolder)this._viewHolder;
 
                 vHolder.idTextView.setText(db.getId());
+                vHolder.ridTextView.setText(db.getRid());
+                vHolder.selfTextView.setText(db.getSelf());
+                vHolder.eTagTextView.setText(db.getEtag());
+                vHolder.collsTextView.setText(db.getColls());
+                vHolder.usersTextView.setText(db.getUsers());
+
+                vHolder.idTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        v.getContext().startActivity(new Intent(v.getContext(), CollectionsActivity.class));
+                    }
+                });
 
                 return null;
             }
         }, DatabaseViewHolder.class, this);
 
-        /**
-         * Set up Android CardView/RecycleView
-         */
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mRecyclerView.setAdapter(_adapter);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(_adapter);
 
         /**
          * START: button set up
@@ -88,6 +104,8 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
 
                 try
                 {
+                    final ProgressDialog dialog = ProgressDialog.show(CollectionsActivity.this, "", "Loading. Please wait...", true);
+
                     /*JSONObject document = new JSONObject();
                     document.put("filename", "new_document");
                     document.put("user", "michael");
@@ -107,8 +125,23 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
                                 Log.e("onError", "WIGGUM");
                             });*/
 
-                    controller.executeQuery("testDb", "example", "SELECT * FROM root WHERE (root.Author.id = @author)",
-                            params);
+                    _rxController.getDatabases()
+                            // Run on a background thread
+                            .subscribeOn(Schedulers.io())
+                            // Be notified on the main thread
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(x -> {
+                                Log.e(TAG, "_rxController.getDatabases() - finished.");
+
+                                ArrayList<DatabaseContract> databases = x.getDatabases();
+
+                                for (DatabaseContract contract: x.getDatabases()) {
+                                    _adapter.addData(new Database(contract.getId(), contract.getRid(), contract.getSelf(),
+                                            contract.getEtag(), contract.getColls(), contract.getUsers(), contract.getTs()));
+                                }
+
+                                dialog.cancel();
+                            });
 
                     //controller.getAttachment("testDb", "example", "wiggum", "imageId1");
                 }
