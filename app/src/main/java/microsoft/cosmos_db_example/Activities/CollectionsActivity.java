@@ -160,6 +160,11 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (_adapter != null) {
+            _adapter.clear();
+        }
+
         App.activityResumed();
     }
 
