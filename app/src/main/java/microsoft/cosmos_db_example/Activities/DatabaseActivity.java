@@ -14,7 +14,9 @@
 package microsoft.cosmos_db_example.Activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +24,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.HashMap;
 
@@ -50,7 +54,7 @@ public class DatabaseActivity extends Activity implements CosmosDelegate {
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        setContentView(R.layout.databases_activity);
 
         _rxController = CosmosRxController.getInstance(this);
         controller = CosmosController.getInstance(this);
@@ -88,16 +92,57 @@ public class DatabaseActivity extends Activity implements CosmosDelegate {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(_adapter);
 
-        Button bClear = (Button) findViewById(R.id.button_clear);
-        Button bFetch = (Button) findViewById(R.id.button_fetch);
+        Button clearButton = (Button) findViewById(R.id.button_clear);
+        Button fetchButton = (Button) findViewById(R.id.button_fetch);
+        Button createButton = (Button) findViewById(R.id.button_create);
 
-        bClear.setOnClickListener(new View.OnClickListener() {
+        clearButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 _adapter.clear();
             }
         });
 
-        bFetch.setOnClickListener(new View.OnClickListener() {
+        createButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String databaseId;
+
+                View editTextView = getLayoutInflater().inflate(R.layout.edit_text, null);
+                EditText editText = (EditText)editTextView.findViewById(R.id.editText);
+                TextView messageTextView = (TextView)editTextView.findViewById(R.id.messageText);
+                messageTextView.setText(R.string.database_dialogue);
+
+                new AlertDialog.Builder(DatabaseActivity.this)
+                        .setView(editTextView)
+                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String databaseId = editText.getText().toString();
+                                final ProgressDialog progressDialog = ProgressDialog.show(DatabaseActivity.this, "", "Creating. Please wait...", true);
+
+                                _rxController.createDatabase(databaseId)
+                                        // Run on a background thread
+                                        .subscribeOn(Schedulers.io())
+                                        // Be notified on the main thread
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(x -> {
+                                            _adapter.clear();
+
+                                            Log.e(TAG, "_rxController.createDatabase(databaseId) - finished.");
+
+                                            dialog.cancel();
+                                            progressDialog.cancel();
+                                        });
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        }).show();
+
+
+            }
+        });
+
+        fetchButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try
                 {

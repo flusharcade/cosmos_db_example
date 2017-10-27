@@ -14,7 +14,9 @@
 package microsoft.cosmos_db_example.Activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import microsoft.cosmos_db_example.Adapter.Callback;
@@ -94,6 +97,7 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
         Button clearButton = (Button) findViewById(R.id.button_clear);
         Button fetchButton = (Button) findViewById(R.id.button_fetch);
         Button deleteButton = (Button) findViewById(R.id.button_delete);
+        Button createButton = (Button) findViewById(R.id.button_create);
 
         clearButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -153,6 +157,46 @@ public class CollectionsActivity extends Activity implements CosmosDelegate {
                 catch (Exception ex) {
                     ex.printStackTrace();
                 }
+            }
+        });
+
+        createButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String databaseId;
+
+                View editTextView = getLayoutInflater().inflate(R.layout.edit_text, null);
+                EditText editText = (EditText)editTextView.findViewById(R.id.editText);
+                TextView messageTextView = (TextView)editTextView.findViewById(R.id.messageText);
+                messageTextView.setText(R.string.document_collection_dialogue);
+
+                new AlertDialog.Builder(CollectionsActivity.this)
+                        .setView(editTextView)
+                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String collectionId = editText.getText().toString();
+                                final ProgressDialog progressDialog = ProgressDialog.show(CollectionsActivity.this, "", "Creating. Please wait...", true);
+
+                                _rxController.createCollection(_databaseId, collectionId)
+                                        // Run on a background thread
+                                        .subscribeOn(Schedulers.io())
+                                        // Be notified on the main thread
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(x -> {
+                                            _adapter.clear();
+
+                                            Log.e(TAG, "_rxController.createCollection(_databaseId, collectionId) - finished.");
+
+                                            dialog.cancel();
+                                            progressDialog.cancel();
+                                        });
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        }).show();
+
+
             }
         });
     }
