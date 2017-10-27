@@ -101,8 +101,9 @@ public class DocumentsActivity extends Activity implements CosmosDelegate {
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final ProgressDialog dialog = ProgressDialog.show(DocumentsActivity.this, "", "Loading. Please wait...", true);
-                _rxController.deleteDatabase(_databaseId)
+                final ProgressDialog dialog = ProgressDialog.show(DocumentsActivity.this, "", "Deleting. Please wait...", true);
+
+                _rxController.deleteCollection(_databaseId, _collectionId)
                         // Run on a background thread
                         .subscribeOn(Schedulers.io())
                         // Be notified on the main thread
@@ -110,14 +111,9 @@ public class DocumentsActivity extends Activity implements CosmosDelegate {
                         .subscribe(x -> {
                             Log.e(TAG, "_rxController.deleteDatabases(_databaseId) - finished.");
 
-//                                ArrayList<DatabaseContract> databases = x.get();
-//
-//                                for (DatabaseContract contract: x.getDatabases()) {
-//                                    _adapter.addData(new Database(contract.getId(), contract.getRid(), contract.getSelf(),
-//                                            contract.getEtag(), contract.getColls(), contract.getUsers(), contract.getTs()));
-//                                }
-
                             dialog.cancel();
+
+                            finish();
                         });
 
                 _adapter.clear();

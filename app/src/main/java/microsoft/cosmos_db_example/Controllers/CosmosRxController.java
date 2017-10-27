@@ -169,11 +169,8 @@ public class CosmosRxController {
         String resourceLink = String.format("dbs/%s/colls/%s", databaseId, collectionId);
         String resourceId = idBased ? resourceLink : collectionId.toLowerCase(Locale.ROOT);
 
-        String authString = generateAuthToken(HttpMethod.GET.toString(), "colls", resourceId, date,
+        String authString = generateAuthToken(HttpMethod.DELETE.toString(), "colls", resourceId, date,
                 DBConstants.PrimaryKey, "master", "1.0");
-
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("id", databaseId);
 
         CosmosRxService service = WebServiceFactory.create(CosmosRxService.class);
 

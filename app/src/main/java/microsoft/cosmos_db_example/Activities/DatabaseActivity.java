@@ -90,6 +90,7 @@ public class DatabaseActivity extends Activity implements CosmosDelegate {
 
         Button bClear = (Button) findViewById(R.id.button_clear);
         Button bFetch = (Button) findViewById(R.id.button_fetch);
+
         bClear.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 _adapter.clear();
