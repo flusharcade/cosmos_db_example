@@ -14,6 +14,7 @@
 package microsoft.cosmos_db_example.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -95,6 +96,8 @@ public class MainActivity extends Activity implements CosmosDelegate {
 
                 try
                 {
+                    final ProgressDialog dialog = ProgressDialog.show(MainActivity.this, "", "Loading. Please wait...", true);
+
                     /*JSONObject document = new JSONObject();
                     document.put("filename", "new_document");
                     document.put("user", "michael");
@@ -128,6 +131,8 @@ public class MainActivity extends Activity implements CosmosDelegate {
                                     _adapter.addData(new Database(contract.getId(), contract.getRid(), contract.getSelf(),
                                             contract.getEtag(), contract.getColls(), contract.getUsers(), contract.getTs()));
                                 }
+
+                                dialog.cancel();
                             });
 
                     //controller.getAttachment("testDb", "example", "wiggum", "imageId1");
